@@ -1,0 +1,63 @@
+16.	Write a python program to transform data with Principal Component Analysis (PCA). Use iris dataset. 
+
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.decomposition import PCA
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score
+
+data=pd.read_csv("iris.csv")
+x = data[["SepalLengthCm","SepalWidthCm","PetalLengthCm","PetalWidthCm"]]
+y = data["Species"]
+
+pca = PCA(n_components=2)
+X_reduced = pca.fit_transform(x)
+
+X_train, X_test, y_train, y_test = train_test_split(X_reduced, y, test_size=0.2, random_state=42)
+
+knn = KNeighborsClassifier(n_neighbors=5)
+knn.fit(X_train, y_train)
+
+y_pred = knn.predict(X_test)
+
+accuracy = accuracy_score(y_test, y_pred)
+print(f'KNN Model Accuracy: {accuracy * 100:.2f}%')
+
+new_flower = [[5.9, 3.0, 5.1, 1.8]]
+
+new_flower_reduced = pca.transform(new_flower)
+
+predicted_class = knn.predict(new_flower_reduced)
+print(predicted_class)
+
+
+
+2.	Write a Python program to prepare Scatter Plot for Iris Dataset. Convert Categorical values in numeric format for a dataset 
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.preprocessing import LabelEncoder
+
+data=pd.read_csv("iris.csv")
+data=data.dropna(axis=0,how="any")
+print(data)
+
+x=data["SepalLengthCm"]
+y=data["SepalWidthCm"]
+z=data["Species"]
+le=LabelEncoder()
+z1=le.fit_transform(z)
+print(z)
+print(z1)
+
+
+
+plt.scatter(x,y,c=z1)
+plt.title("IRIS CSV")
+plt.xlabel("SepalLengthCm")
+plt.ylabel("SepalWidthCm")
+plt.show()
+
