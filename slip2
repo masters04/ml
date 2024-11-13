@@ -1,0 +1,77 @@
+3.	Write a python program to implement simple Linear Regression for predicting house price. First find all null values in a given dataset and remove them. 
+
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.linear_model import LinearRegression
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import mean_absolute_error
+
+data=pd.read_csv("house.csv")
+print(data)
+data=data.dropna(axis=0,how=”any”)
+print(data)
+
+x=data[["sqft_living"]]
+y=data.price
+
+print(x)
+print(y)
+
+plt.scatter(x,y)
+plt.xlabel("sqft_living")
+plt.ylabel("price")
+plt.show()
+
+xtrain,xtest,ytrain,ytest=train_test_split(x,y,test_size=0.2)
+print(xtrain)
+print(xtest)
+print(ytrain)
+print(ytest)
+
+lr=LinearRegression()
+lr.fit(xtrain,ytrain)
+
+print(lr.intercept_)
+print(lr.coef_)
+
+print(lr.predict([[1000]]))
+
+
+ypred=lr.predict(xtest)
+cm=mean_absolute_error(ytest,ypred)
+print(cm)
+
+4.	The data set refers to clients of a wholesale distributor. It includes the annual spending in monetary units on diverse product categories. Using data Wholesale customer dataset compute agglomerative clustering to find out annual spending clients in the same region. 
+
+
+import pandas as pd
+from sklearn.preprocessing import StandardScaler
+from sklearn.cluster import AgglomerativeClustering
+import scipy.cluster.hierarchy as sch
+import matplotlib.pyplot as plt
+
+data = pd.read_csv('wholesale.csv')
+
+X = data.drop(['Region', 'Channel'], axis=1)
+
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+
+agg_clustering = AgglomerativeClustering(n_clusters=3, linkage='ward')
+
+clusters = agg_clustering.fit_predict(X_scaled)
+
+data['Cluster'] = clusters
+print(data)
+
+dendrogram = sch.dendrogram(sch.linkage(X_scaled, method='ward'))
+plt.title('Dendrogram')
+plt.xlabel('Customers')
+plt.ylabel('Euclidean Distances')
+plt.show()
+
+print(data['Cluster'].value_counts())
+
+cluster_summary = data.groupby('Cluster').mean()
+print(cluster_summary)
