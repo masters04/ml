@@ -1,0 +1,59 @@
+9.	Write a python program to implement Polynomial Linear Regression for Boston Housing Dataset 
+
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.linear_model import LinearRegression
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import mean_absolute_error
+data=pd.read_csv("housing.csv")
+print(data)
+x=data[["sqft_living"]]
+y=data.price
+xtrain,xtest,ytrain,ytest=train_test_split(x,y,test_size=0.2)
+lr=LinearRegression()
+lr.fit(xtrain,ytrain)
+ypred=lr.predict(xtest)
+cm=mean_absolute_error(ytest,ypred)
+from sklearn.preprocessing import PolynomialFeatures
+pr=PolynomialFeatures(degree=2)
+xpoly=pr.fit_transform(x)
+poreg=LinearRegression()
+poreg.fit(xpoly,y)
+print(lr.intercept_)
+print(lr.coef_)
+print(poreg.intercept_)
+print(poreg.coef_)
+print(lr.predict([[1000]]))
+print(poreg.predict(pr.fit_transform([[1000]])))
+
+17.	Write a python program to Implement Decision Tree classifier model on Data which is extracted from images that were taken from genuine and forged banknote-like specimens. 
+
+
+import pandas as pd
+import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.metrics import classification_report
+
+data=pd.read_csv("features.csv")
+
+x=data[["a1","a2","a3","a4"]]
+y=data['label']
+
+xtrain,xtest,ytrain,ytest=train_test_split(x,y,test_size=0.2,random_state=42)
+
+dc=DecisionTreeClassifier(random_state=42)
+
+dc.fit(xtrain,ytrain)
+
+ypred=dc.predict(xtest)
+
+cr=classification_report(ytest,ypred)
+print(cr)
+
+print(dc.predict([[4.6765,-3.3895,3.4896,1.4771]]))
+print(dc.predict([[0.0040545,0.62905,-0.64121,0.75817]]))
+
+
+
