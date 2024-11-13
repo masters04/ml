@@ -1,0 +1,62 @@
+14.	Implement Ridge Regression and Lasso regression model using boston_houses.csv and take only ‘RM’ and ‘Price’ of the houses. Divide the data as training and testing data. Fit line using Ridge regression and to find price of a house if it contains 5 rooms and compare results.
+
+import pandas as pd
+data = pd.read_csv('boston_houses.csv')
+data = data[['rm', 'price']]
+
+X = data[['rm']]
+y = data['price']
+
+from sklearn.model_selection import train_test_split
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.7)
+
+from sklearn.linear_model import Ridge
+ridge_model = Ridge(alpha=1.0)  
+ridge_model.fit(X_train, y_train)
+price_5_rooms_ridge = ridge_model.predict([[5]])
+print(" ridge Price for a house with 5 rooms:=>",price_5_rooms_ridge)
+
+from sklearn.linear_model import Lasso
+lasso_model = Lasso(alpha=0.1)  
+lasso_model.fit(X_train, y_train)
+price_5_rooms_lasso = lasso_model.predict([[5]])
+print("lasso Price for a house with 5 rooms: =>",price_5_rooms_lasso)
+
+from sklearn.linear_model import ElasticNet
+elasticnet_model = ElasticNet(alpha=1.0, l1_ratio=0.5)  
+elasticnet_model.fit(X_train, y_train)
+price_5_rooms_elasticnet = elasticnet_model.predict([[5]])
+print("ElasticNet Regression - Price for a house with 5 rooms: =>",price_5_rooms_elasticnet)
+
+15.	Write a python program to implement Linear SVM using UniversalBank.csv 
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.svm import SVC
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+
+data = pd.read_csv('UniversalBank.csv')
+
+print("Data sample:")
+print(data.head())
+
+data = data.drop(columns=['ID', 'ZIP Code'], errors='ignore')
+X = data.drop(columns=['PersonalLoan'])  
+y = data['PersonalLoan']                 
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+scaler = StandardScaler()
+X_train = scaler.fit_transform(X_train)
+X_test = scaler.transform(X_test)
+svm_model = SVC(kernel='linear', random_state=42)
+svm_model.fit(X_train, y_train)
+y_pred = svm_model.predict(X_test)
+accuracy = accuracy_score(y_test, y_pred)
+print(f"Model Accuracy: {accuracy * 100:.2f}%")
+print("\nClassification Report:")
+print(classification_report(y_test, y_pred))
+print("\nConfusion Matrix:")
+print(confusion_matrix(y_test, y_pred))
+
+
