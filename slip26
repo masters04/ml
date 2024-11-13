@@ -1,0 +1,76 @@
+22.	Create KNN model on Indian diabetes patient’s database and predict whether a new 
+patient is diabetic (1) or not (0). Find optimal value of K. 
+
+import pandas as pd
+import numpy as np
+from sklearn.model_selection import train_test_split, cross_val_score
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+import matplotlib.pyplot as plt
+data = pd.read_csv('diabetes.csv')
+print("Dataset Sample:")
+print(data.head())
+X = data.drop(columns=['Outcome'])  # Features
+y = data['Outcome']                 # Target variable (1 = Diabetic, 0 = Non-diabetic)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+scaler = StandardScaler()
+X_train = scaler.fit_transform(X_train)
+X_test = scaler.transform(X_test)
+k_range = range(1, 26)
+cv_scores = []  # Store accuracy for each value of k
+
+for k in k_range:
+    knn = KNeighborsClassifier(n_neighbors=k)
+    scores = cross_val_score(knn, X_train, y_train, cv=10, scoring='accuracy')
+    cv_scores.append(scores.mean())
+plt.plot(k_range, cv_scores)
+plt.xlabel('Number of Neighbors (k)')
+plt.ylabel('Cross-Validated Accuracy')
+plt.title('Finding Optimal k')
+plt.show()
+optimal_k = k_range[np.argmax(cv_scores)]
+print(f"The optimal number of neighbors is {optimal_k} with accuracy {max(cv_scores) * 100:.2f}%.")
+
+knn_optimal = KNeighborsClassifier(n_neighbors=optimal_k)
+knn_optimal.fit(X_train, y_train)
+
+y_pred = knn_optimal.predict(X_test)
+
+accuracy = accuracy_score(y_test, y_pred)
+print(f"Model Accuracy on Test Set: {accuracy * 100:.2f}%")
+print("\nClassification Report:")
+print(classification_report(y_test, y_pred))
+print("\nConfusion Matrix:")
+print(confusion_matrix(y_test, y_pred))
+
+1.	Use Apriori algorithm on groceries dataset to find which items are brought together. Use minimum support =0.25 
+
+import pandas as pd
+from mlxtend.preprocessing import TransactionEncoder
+from mlxtend.frequent_patterns import apriori, association_rules
+groceries = [
+    ['milk', 'bread', 'eggs'],
+    ['milk', 'bread'],
+    ['milk', 'butter', 'bread'],
+    ['bread', 'eggs'],
+    ['butter', 'eggs']
+]
+
+te = TransactionEncoder()
+te_ary = te.fit(groceries).transform(groceries)
+df = pd.DataFrame(te_ary, columns=te.columns_)
+
+print("Binary Matrix of Transactions:")
+print(df)
+
+
+frequent_itemsets = apriori(df, min_support=0.25, use_colnames=True)
+
+print("\nFrequent Itemsets:")
+print(frequent_itemsets)
+
+rules = association_rules(frequent_itemsets, metric="confidence", min_threshold=0.5)
+
+print("\nAssociation Rules:")
+print(rules[['antecedents', 'consequents', 'support', 'confidence']])
