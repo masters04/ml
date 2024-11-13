@@ -1,0 +1,81 @@
+11.	Fit the simple linear regression / polynomial liner regression model to Salary_positions.csv data. Predict the salary of level 11 and level 12 employees
+
+
+
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.linear_model import LinearRegression
+
+data=pd.read_csv("position_salaries.csv")
+print(data)
+
+x=data.iloc[:,1:2].values
+y=data.iloc[:,2].values
+
+print(x)
+print(y)
+
+from sklearn.model_selection import train_test_split
+xtrain,xtest,ytrain,ytest=train_test_split(x,y,test_size=0.25)
+
+lr=LinearRegression()
+lr.fit(xtrain,ytrain)
+ypred=lr.predict(xtest)
+
+plt.scatter(x,y,c="red")
+plt.plot(x,lr.predict(x),c="green")
+plt.show()
+
+from sklearn.preprocessing import PolynomialFeatures
+pr=PolynomialFeatures(degree=4)
+xpoly=pr.fit_transform(x)
+poreg=LinearRegression()
+poreg.fit(xpoly,y)
+
+plt.scatter(x,y,c="red")
+plt.plot(x,poreg.predict(pr.fit_transform(x)),c="green")
+plt.show()
+
+
+print(lr.predict([[11]]))
+print(poreg.predict(pr.fit_transform([[11]])))
+
+print(lr.predict([[12]]))
+print(poreg.predict(pr.fit_transform([[12]])))
+
+12.	Write a python program to implement Naive Bayes on weather forecast dataset.
+
+
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.naive_bayes import GaussianNB
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+from sklearn.preprocessing import LabelEncoder
+
+data = pd.read_csv('weather.csv')
+le=LabelEncoder()
+data["Outlook"]=le.fit_transform(data["Outlook"])
+data["Temprature"]=le.fit_transform(data["Temprature"])
+data["Humidity"]=le.fit_transform(data["Humidity"])
+data["Wind"]=le.fit_transform(data["Wind"])
+data["Play_Tennis"]=le.fit_transform(data["Play_Tennis"])
+
+x=data.iloc[:,1:5].values
+y=data["Play_Tennis"]
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+gnb = GaussianNB()
+
+gnb.fit(X_train, y_train)
+
+y_pred = gnb.predict(X_test)
+
+accuracy = accuracy_score(y_test, y_pred)
+print(f"Accuracy: {accuracy * 100:.2f}%")
+print("\nClassification Report:")
+print(classification_report(y_test, y_pred))
+print("\nConfusion Matrix:")
+print(confusion_matrix(y_test, y_pred))
+
