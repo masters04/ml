@@ -1,0 +1,71 @@
+14.	Implement Ridge Regression and Lasso regression model using boston_houses.csv and take only ‘RM’ and ‘Price’ of the houses. Divide the data as training and testing data. Fit line using Ridge regression and to find price of a house if it contains 5 rooms and compare results.
+
+import pandas as pd
+data = pd.read_csv('boston_houses.csv')
+data = data[['rm', 'price']]
+
+X = data[['rm']]
+y = data['price']
+
+from sklearn.model_selection import train_test_split
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.7)
+
+from sklearn.linear_model import Ridge
+ridge_model = Ridge(alpha=1.0)  
+ridge_model.fit(X_train, y_train)
+price_5_rooms_ridge = ridge_model.predict([[5]])
+print(" ridge Price for a house with 5 rooms:=>",price_5_rooms_ridge)
+
+from sklearn.linear_model import Lasso
+lasso_model = Lasso(alpha=0.1)  
+lasso_model.fit(X_train, y_train)
+price_5_rooms_lasso = lasso_model.predict([[5]])
+print("lasso Price for a house with 5 rooms: =>",price_5_rooms_lasso)
+
+from sklearn.linear_model import ElasticNet
+elasticnet_model = ElasticNet(alpha=1.0, l1_ratio=0.5)  
+elasticnet_model.fit(X_train, y_train)
+price_5_rooms_elasticnet = elasticnet_model.predict([[5]])
+print("ElasticNet Regression - Price for a house with 5 rooms: =>",price_5_rooms_elasticnet)
+
+13.	Write a python program to implement Decision Tree whether or not to play Tennis.
+
+import pandas as pd
+import numpy as np
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.preprocessing import LabelEncoder
+
+data=pd.read_csv("tennis.csv")
+print(data)
+
+le=LabelEncoder()
+data["Outlook"]=le.fit_transform(data["Outlook"])
+data["Temprature"]=le.fit_transform(data["Temprature"])
+data["Humidity"]=le.fit_transform(data["Humidity"])
+data["Wind"]=le.fit_transform(data["Wind"])
+data["Play_Tennis"]=le.fit_transform(data["Play_Tennis"])
+print(data)
+
+x=data.iloc[:,1:5].values
+y=data["Play_Tennis"]
+print(x)
+print(y)
+
+from sklearn.model_selection import train_test_split
+xtrain,xtest,ytrain,ytest=train_test_split(x,y,test_size=0.4)
+
+dc=DecisionTreeClassifier(criterion="entropy")
+dc.fit(xtrain,ytrain)
+ypred=dc.predict(xtest)
+
+from sklearn.metrics import confusion_matrix
+cm=confusion_matrix(ytest,ypred)
+print(cm)
+
+from sklearn.tree import export_graphviz
+export_graphviz(dc,out_file="abc.dat")
+
+from sklearn.metrics import accuracy_score
+print("accuracy:",accuracy_score(ytest,ypred))
+
