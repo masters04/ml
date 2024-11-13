@@ -1,0 +1,72 @@
+18.	Create an ANN and train it on house price dataset classify the house price is above 
+average or below average. 
+import numpy as np  	import pandas as pd
+from sklearn.datasets import fetch_california_housing
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from tensorflow.keras.models import Sequential   from tensorflow.keras.layers import Dense
+data = fetch_california_housing()
+X = data.data  # Features
+y = data.target  # Target (house prices)
+average_price = np.mean(y)
+y_binary = np.where(y > average_price, 1, 0)  # 1 if above average, 0 if below
+X_train, X_test, y_train, y_test = train_test_split(X, y_binary, test_size=0.2, random_state=42)
+scaler = StandardScaler()
+X_train = scaler.fit_transform(X_train)
+X_test = scaler.transform(X_test)
+# Create a Sequential ANN model
+model = Sequential()
+model.add(Dense(16, input_shape=(X_train.shape[1],), activation='relu'))  # Hidden Layer 1
+model.add(Dense(8, activation='relu'))  # Hidden Layer 2
+model.add(Dense(1, activation='sigmoid'))  # Output Layer for binary classification
+# Compile the model with binary cross-entropy loss and an optimizer
+model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
+history = model.fit(X_train, y_train, epochs=50, batch_size=32, validation_split=0.2, verbose=1)
+test_loss, test_accuracy = model.evaluate(X_test, y_test, verbose=1)
+print(f"\nTest Accuracy: {test_accuracy * 100:.2f}%")
+y_pred = model.predict(X_test) > 0.5  # Convert probabilities to binary labels
+print("\nSample Predictions:")
+for i in range(5):
+    print(f"Predicted: {'Above Average' if y_pred[i] else 'Below Average'}, Actual: {'Above Average' if y_test[i] else 'Below Average'}")
+
+5.	Write a python program to implement multiple Linear Regression for a house price dataset. Divide the dataset into training and testing data. 
+
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.linear_model import LinearRegression
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import mean_absolute_error
+
+data=pd.read_csv("house.csv")
+print(data)
+
+x=data[["bedrooms","sqft_living"]]
+y=data.price
+
+print(x)
+print(y)
+
+
+xtrain,xtest,ytrain,ytest=train_test_split(x,y,test_size=0.2)
+print(xtrain)
+print(xtest)
+print(ytrain)
+print(ytest)
+
+lr=LinearRegression()
+lr.fit(xtrain,ytrain)
+
+print(lr.intercept_)
+print(lr.coef_)
+
+print(lr.predict([[2,1000]]))
+
+
+ypred=lr.predict(xtest)
+cm=mean_absolute_error(ytest,ypred)
+print(cm)
+
+
+
+
